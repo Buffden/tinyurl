@@ -1,0 +1,71 @@
+@startuml URLShortenerV1
+title URL Shortener v1 - High Level Design (Single Region)
+
+left to right direction
+skinparam linetype ortho
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam nodesep 170
+skinparam ranksep 90
+skinparam packagePadding 26
+skinparam componentPadding 12
+skinparam component<<spacer>> {
+    BorderColor transparent
+    BackgroundColor transparent
+    FontColor transparent
+}
+
+' ---------------- CLIENT ----------------
+actor User
+
+' ---------------- INTERNET ----------------
+package "Public Internet" #LightGray {
+    cloud "DNS\n(tinyurl.buffden.com)" as DNS
+}
+
+' ---------------- AWS REGION ----------------
+package "AWS Region (Single Region)" #LightBlue {
+
+    package "Entry Layer" #LightGreen {
+        [Load Balancer\n(L4 / L7)] as LB
+    }
+
+    package "Application Tier" #LightYellow {
+        [Nginx\n(TLS Termination + Reverse Proxy)] as NGINX
+        [URL Shortener App\n(Stateless Instances)] as APP
+    }
+
+    package "Data Tier" #LightCoral {
+        [ ] as DATA_GAP <<spacer>>
+        database "PostgreSQL\nPrimary DB" as DB
+    }
+}
+
+' Layout alignment
+NGINX -[hidden]-> APP
+APP -[hidden]-> DATA_GAP
+DATA_GAP -[hidden]-> DB
+
+' ---------------- FLOW ----------------
+
+User --> DNS : Resolve \n domain
+User --> LB : HTTPS \n Request
+
+LB --> NGINX
+NGINX --> APP
+
+APP --> DB : Lookup \n short_code
+DB --> APP : Return \n original_url
+
+APP --> User : HTTP\n 301 / 302 \n Redirect
+
+User --> LB : POST /create
+LB --> NGINX
+NGINX --> APP
+APP --> DB : INSERT short_code + original_url
+APP --> User : Return short URL
+
+
+@enduml
