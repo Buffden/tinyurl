@@ -26,6 +26,7 @@ Use a **database auto-increment sequence** as the source of truth for uniqueness
 
 - Application must implement Base62 encoding/decoding.
 - ID generation is coupled to the primary DB sequence — acceptable at v1 write volumes (~5–10 create QPS).
+- Create QPS (~5–10) is low enough that DB sequence contention is not a bottleneck.
 - Short codes are sequential and therefore **enumerable**. No private content exists in v1, so enumeration is an accepted risk. If enumeration resistance is required in v2+, randomise the ID space or add obfuscation under a new ADR.
 - Short code length grows logarithmically with URL count (10M URLs ≈ 4–5 Base62 characters — well within the 6–8 target).
 
