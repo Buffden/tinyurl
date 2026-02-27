@@ -46,8 +46,8 @@
 - **Postconditions**: User is redirected to the original URL.
 - **Error Conditions**:
   - Short code not found: HTTP 404
-  - Short code expired: HTTP 404
-  - Short code soft-deleted (v2): HTTP 404 or 410
+  - Short code expired: HTTP 410
+  - Short code soft-deleted (v2): HTTP 410
 
 ---
 
@@ -58,7 +58,7 @@
 - **Trigger**: Current time exceeds `expires_at`
 - **Main Flow**:
   1. On redirect request, system checks `expires_at`.
-  2. If expired, system returns HTTP 404 instead of redirecting.
+  2. If expired, system returns HTTP 410 instead of redirecting.
   3. Optional cleanup job archives or removes expired records.
 - **Note**: Cleanup is not required for correctness; the redirect path enforces expiry on every request.
 - **Postconditions**: Expired link is no longer accessible via redirect.
