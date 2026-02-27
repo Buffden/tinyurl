@@ -20,7 +20,10 @@ Short URLs need a lifecycle policy. Without one, the database grows unbounded an
 
 Apply a **180-day default expiry** when the client provides none. Clients may supply a shorter or longer value at creation time.
 
-On redirect, if `expires_at < now()`: return **HTTP 404**. Treat expired codes identically to unknown codes.
+On redirect:
+
+- If `expires_at < now()` or `is_deleted = true`: return **HTTP 410 Gone**. The resource existed and is intentionally unavailable.
+- If the short code is not found at all: return **HTTP 404 Not Found**.
 
 No cleanup job in v1. Expired records remain in the DB, filtered on read. A periodic cleanup job is deferred to v2.
 
@@ -42,4 +45,4 @@ No cleanup job in v1. Expired records remain in the DB, filtered on read. A peri
 | --- | --- |
 | No expiration | Unbounded DB growth; dead links accumulate forever |
 | Mandatory fixed expiry for all links | Too restrictive — users with long-lived links cannot opt out |
-| Return HTTP 410 for expired links | 410 confirms that a code existed, which aids short-code enumeration; 404 is safer |
+| Return HTTP 404 for all cases (found, expired, unknown) | Loses HTTP semantic precision; clients cannot distinguish "never existed" from "existed and expired"; makes debugging harder |

@@ -91,7 +91,7 @@ These decisions are locked before v1 implementation begins. Changing them requir
 | ID generation | Auto-increment DB sequence encoded in Base62 | [ADR-001](adr/ADR-001-id-generation-strategy.md) |
 | Scaling approach | Horizontal at app layer; single primary DB | [ADR-002](adr/ADR-002-scaling-approach.md) |
 | Redirect status code | 301 if no explicit expiry; 302 if explicit expiry set | [ADR-003](adr/ADR-003-redirect-status-code.md) |
-| Expired link response | HTTP 404 — treats expired codes identically to unknown codes | [ADR-004](adr/ADR-004-expiration-policy.md) |
+| Expired / deleted link response | HTTP 410 (existed, now gone); HTTP 404 for unknown codes | [ADR-004](adr/ADR-004-expiration-policy.md) |
 
 ---
 
@@ -154,4 +154,4 @@ See [v2/url-shortener-v2.md](v2/url-shortener-v2.md) and [v2/url-shortener-v2-hl
 | [adr/ADR-001](adr/ADR-001-id-generation-strategy.md) | ID generation: Base62-encoded auto-increment sequence |
 | [adr/ADR-002](adr/ADR-002-scaling-approach.md) | Scaling: horizontal app layer, single primary DB |
 | [adr/ADR-003](adr/ADR-003-redirect-status-code.md) | Redirect status: 301 vs 302 based on expiry intent |
-| [adr/ADR-004](adr/ADR-004-expiration-policy.md) | Expiration: 180-day default, HTTP 404 for expired links |
+| [adr/ADR-004](adr/ADR-004-expiration-policy.md) | Expiration: 180-day default, HTTP 410 for expired/deleted, HTTP 404 for unknown |

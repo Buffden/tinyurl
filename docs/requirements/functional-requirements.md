@@ -23,7 +23,8 @@
 - **Behavior**:
   - If the short code exists and is not expired: redirect to the original URL.
   - If the short code does not exist: return HTTP 404.
-  - If the short code is expired: return HTTP 404.
+  - If the short code is expired: return HTTP 410.
+  - If the short code is soft-deleted (v2): return HTTP 410.
 
 ---
 
@@ -73,7 +74,7 @@
 - **Version**: v2
 - **Description**: Administrators can soft-delete a link to block access without losing the record.
 - **Behavior**:
-  - Soft-deleted links return HTTP 404/410 on redirect.
+  - Soft-deleted links return HTTP 410 on redirect.
   - The mapping record is preserved for audit purposes.
   - `is_deleted` flag and `deleted_at` timestamp are set.
 
